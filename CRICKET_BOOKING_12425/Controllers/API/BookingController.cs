@@ -3,6 +3,7 @@ using CRICKET_BOOKING_12425.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CRICKET_BOOKING_12425.Controllers.API
 {
@@ -101,6 +102,59 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                 _dbContext.BookingsTeams.Add(bookingTeams);
                 await _dbContext.SaveChangesAsync();
                 return Ok(new { Status = "Ok", Result = "Booking Successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("BookingList/{AdminMasterId?}")]
+
+        public async Task<IActionResult> BookingList(int? AdminMasterId)
+        {
+            try
+            {
+                try
+                {
+                    var Data  = await (from A in _dbContext.AdminMasters
+                                                 join B in _dbContext.BookingsLimets on A.AdminMasterId equals B.AdminMasterId
+                                                 join C in _dbContext.BookingsTeams on B.BookingLimetId equals C.BookingLimetId
+                                                 join D in _dbContext.Tournaments on C.TournamentId equals D.TournamentId
+                                                 where D.AdminMasterId == AdminMasterId
+                                                 select new
+                                                 {
+                                                     A.CubName,
+                                                     B.BookingLimetId,
+                                                     B.BookingPerson,
+                                                     B.AdminMasterId,
+                                                     C.BookingDate,
+                                                     C.TeamsName,
+                                                     C.ContactNo,
+                                                     C.CricHeroesUrl,
+                                                     C.Email,
+                                                     C.VCaptainName,
+                                                     C.Logo,
+                                                     C.VContactNo,
+                                                     C.BookingTeamsId,
+                                                     D.TournamentName,
+                                                     D.Amount,
+                                                 }).ToListAsync();
+                    if (Data != null) 
+                    {
+                        return Ok(new { Status = "Ok", Result = Data });
+                    }
+                    else
+                    {
+                        return Ok(new { Status = "Fail", Result = "Not Found" });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return Ok(new { Status = "Fail", Result = ex.Message });
+                }
+
             }
             catch (Exception ex)
             {
