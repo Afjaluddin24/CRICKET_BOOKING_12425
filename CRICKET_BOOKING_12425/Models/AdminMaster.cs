@@ -12,6 +12,7 @@ namespace CRICKET_BOOKING_12425.Models
             Tournament = new HashSet<Tournament>();
             BookingsTeams = new HashSet<BookingTeams>();
             Poites = new HashSet<PoiteTable>();
+            CricketMatches = new HashSet<Cricket_Matches>();
         }
         [Key]
         public int AdminMasterId { get; set; }
@@ -34,6 +35,7 @@ namespace CRICKET_BOOKING_12425.Models
         public ICollection<Tournament> Tournament { get; set; }
         public ICollection<BookingTeams> BookingsTeams { get; set; }
         public ICollection<PoiteTable> Poites { get; set; }
+        public ICollection<Cricket_Matches> CricketMatches { get; set; }
 
         [NotMapped]
         public class Authentication

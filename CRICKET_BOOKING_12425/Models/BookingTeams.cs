@@ -9,6 +9,7 @@ namespace CRICKET_BOOKING_12425.Models
         public BookingTeams()
         {
             PoiteTable = new HashSet<PoiteTable>();
+            CricketMatches = new HashSet<Cricket_Matches>();
         }
         [Key]
         public int BookingTeamsId { get; set; }
@@ -32,5 +33,7 @@ namespace CRICKET_BOOKING_12425.Models
         public BookingLimet? BookingLimet { get; set; }
 
         public ICollection<PoiteTable> PoiteTable { get; set; }
+
+        public ICollection<Cricket_Matches> CricketMatches { get; set; }
     }
 }

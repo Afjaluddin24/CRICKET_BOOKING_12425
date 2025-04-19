@@ -4,6 +4,7 @@ using CRICKET_BOOKING_12425.ApplicationContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRICKET_BOOKING_12425.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250419093143_Shekh")]
+    partial class Shekh
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,7 +230,7 @@ namespace CRICKET_BOOKING_12425.Migrations
 
                     b.HasIndex("TournamentId");
 
-                    b.ToTable("CricketMatches");
+                    b.ToTable("Cricket_Matches");
                 });
 
             modelBuilder.Entity("CRICKET_BOOKING_12425.Models.PoiteTable", b =>

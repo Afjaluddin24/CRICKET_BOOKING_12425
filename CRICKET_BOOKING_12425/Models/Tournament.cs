@@ -8,6 +8,7 @@ namespace CRICKET_BOOKING_12425.Models
         public Tournament()
         {
             PoiteTable = new HashSet<PoiteTable>();
+            CricketMatches = new HashSet<Cricket_Matches>();
         }
         [Key]
         public int TournamentId { get; set; }
@@ -26,6 +27,8 @@ namespace CRICKET_BOOKING_12425.Models
         public int? AdminMasterId { get; set; }
         public AdminMaster? AdminMaster { get; set; }
         public ICollection<PoiteTable> PoiteTable { get; set; }
+
+        public ICollection<Cricket_Matches> CricketMatches { get; set; }
 
     }
 }
