@@ -111,59 +111,70 @@ namespace CRICKET_BOOKING_12425.Controllers.API
 
         [HttpGet]
         [Route("BookingList/{AdminMasterId?}")]
-
         public async Task<IActionResult> BookingList(int? AdminMasterId)
         {
             try
             {
-                try
-                {
-                    var Data  = await (from A in _dbContext.AdminMasters
-                                                 join B in _dbContext.BookingsLimets on A.AdminMasterId equals B.AdminMasterId
-                                                 join C in _dbContext.BookingsTeams on B.BookingLimetId equals C.BookingLimetId
-                                                 join D in _dbContext.Tournaments on C.TournamentId equals D.TournamentId
-                                                 where D.AdminMasterId == AdminMasterId
-                                                 select new
-                                                 {
-                                                     A.CubName,
-                                                     B.BookingLimetId,
-                                                     B.BookingPerson,
-                                                     B.AdminMasterId,
-                                                     C.BookingDate,
-                                                     C.TeamsName,
-                                                     C.ContactNo,
-                                                     C.CricHeroesUrl,
-                                                     C.Email,
-                                                     C.VCaptainName,
-                                                     C.Logo,
-                                                     C.VContactNo,
-                                                     C.BookingTeamsId,
-                                                     D.TournamentName,
-                                                     D.Amount,
-                                                 }).ToListAsync();
-                    if (Data != null) 
-                    {
-                        return Ok(new { Status = "Ok", Result = Data });
-                    }
-                    else
-                    {
-                        return Ok(new { Status = "Fail", Result = "Not Found" });
-                    }
-                }
-                catch (Exception ex)
-                {
-                    return Ok(new { Status = "Fail", Result = ex.Message });
-                }
+                var data = await (from C in _dbContext.BookingsTeams 
+                                  join D in _dbContext.Tournaments on C.TournamentId equals D.TournamentId
+                                  where D.AdminMasterId == AdminMasterId
+                                  select new
+                                  {
+                                      C.BookingDate,
+                                      C.TeamsName,
+                                      C.ContactNo,
+                                      C.CricHeroesUrl,
+                                      C.CaptainName,
+                                      C.Email,
+                                      C.VCaptainName,
+                                      C.Logo,
+                                      C.VContactNo,
+                                      C.BookingTeamsId,
+                                      D.TournamentName,
+                                      D.Amount,
+                                  }).ToListAsync();
 
+                if (data.Any())
+                {
+                    return Ok(new { Status = "Ok", Result = data });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "No records found" });
+                }
             }
             catch (Exception ex)
             {
-                return Ok(new { Status = "Fail", Result = ex.Message });
+                return Ok(new { Status = "Error", Result = ex.Message });
             }
+
         }
 
+        [HttpGet]
+        [Route("BookingDelete/{TournamentId?}")]
+        public async Task<IActionResult> BookingDelete(int? TournamentId)
+        {
+            try
+            {
+                var data = await _dbContext.BookingsTeams.FindAsync(TournamentId);
 
+                if (data != null)
+                {
+                    _dbContext.BookingsTeams.Remove(data);
+                    await _dbContext.SaveChangesAsync();
+                    return Ok(new { Status = "Ok", Result = "Delete Successfully" });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "Try Agen" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Error", Result = ex.Message });
+            }
 
+        }
 
     }
 }
