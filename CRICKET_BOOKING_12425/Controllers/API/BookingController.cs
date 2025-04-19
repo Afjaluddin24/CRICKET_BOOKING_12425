@@ -43,27 +43,6 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                 // Check for duplicate values
                 List<string> errors = new List<string>();
 
-                if (existingBookings.Any(o => o.TeamsName == bookingTeams.TeamsName))
-                {
-                    errors.Add("Team name already exists.");
-                }
-                if (existingBookings.Any(o => o.ContactNo == bookingTeams.ContactNo))
-                {
-                    errors.Add("Contact number already exists.");
-                }
-                if (existingBookings.Any(o => o.CricHeroesUrl == bookingTeams.CricHeroesUrl))
-                {
-                    errors.Add("CricHeroes URL already exists.");
-                }
-                if (existingBookings.Any(o => o.Email == bookingTeams.Email))
-                {
-                    errors.Add("Email already exists.");
-                }
-
-                if (errors.Count > 0)
-                {
-                    return Ok(new { Status = "Fail", Result = errors });
-                }
 
                 if (string.IsNullOrEmpty(bookingTeams.Logo))
                 {
@@ -148,6 +127,29 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                 return Ok(new { Status = "Error", Result = ex.Message });
             }
 
+        }
+
+        [HttpGet]
+        [Route("TournamentTeams/{TournamentId}")]
+
+        public async Task<IActionResult> TournamentTeams(int? TournamentId)
+        {
+            try
+            {
+                var Data = await _dbContext.BookingsTeams.Where(o=> o.TournamentId == TournamentId).ToListAsync();
+                if (Data != null)
+                {
+                    return Ok(new { Status = "Ok", Result = Data });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "Not Found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
         }
 
         [HttpGet]

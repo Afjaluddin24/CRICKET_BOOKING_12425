@@ -6,12 +6,12 @@ namespace CRICKET_BOOKING_12425.Models
     {
         [Key]
         public int CricketMatchesId { get; set; }
-        public int? TournamentId { get; set; }
+        public int? TournamentId { get; set; }  
         public Tournament? Tournament { get; set; }
         public int? BookingTeamsId { get; set; }
         public BookingTeams? BookingTeams { get; set; }
-        public int? TeamA {  get; set; }
-        public int? TeamB { get; set; }
+        public string? TeamA {  get; set; }
+        public string? TeamB { get; set; }
         public DateTime MatchDate { get; set; } = DateTime.Now;
         public string Venue {  get; set; } = string.Empty;
         public string Match_type { get; set; } = string.Empty;
