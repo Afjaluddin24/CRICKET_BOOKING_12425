@@ -361,3 +361,4 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/CRICKET_BOOKING_12425/CRICKET_BOOKING_12425.csproj
