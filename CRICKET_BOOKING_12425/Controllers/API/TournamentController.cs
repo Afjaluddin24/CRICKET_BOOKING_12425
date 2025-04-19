@@ -214,6 +214,46 @@ namespace CRICKET_BOOKING_12425.Controllers.API
         }
 
 
+
+        [HttpGet]
+        [Route("PlayMatch/{AdminMasterId}")]
+
+        public async Task<IActionResult> PlayMatch(int? AdminMasterId)
+        {
+            try
+            {
+                var Data = await (from A in _dbContext.BookingsLimets
+                                  join B in _dbContext.Tournaments on A.BookingLimetId equals B.BookingLimetId
+                                  join C in _dbContext.BookingsTeams on B.TournamentId equals C.TournamentId
+                                  where C.AdminMasterId == AdminMasterId
+                                  select new
+                                  {
+                                      B.AdminMasterId,
+                                      B.TournamentId,
+                                      B.TournamentName,
+                                      B.TournamentType,
+                                      B.BookingLimetId,
+                                      A.BookingPerson,
+                                      C.TeamsName,
+                                      C.BookingTeamsId,
+                                      C.CaptainName,
+                                  }).ToListAsync();
+                if(Data != null)
+                {
+                    return Ok(new { Status = "Ok", Result = Data });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "Not Found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+
+
         [HttpGet]
         [Route("DeleteTournament/{TournamentId?}")]
         public async Task<IActionResult> DeleteTournament(int? TournamentId)
