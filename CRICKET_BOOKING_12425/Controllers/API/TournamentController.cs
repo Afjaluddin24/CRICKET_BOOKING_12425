@@ -139,6 +139,7 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                 var Data = await (from A in _dbContext.BookingsLimets 
                                   join B in _dbContext.Tournaments on A.BookingLimetId equals B.BookingLimetId
                                   join C in _dbContext.BookingsTeams on B.TournamentId equals C.TournamentId
+                                  join D in _dbContext.CricketMatches on C.BookingTeamsId equals D.BookingTeamsId
                                   where C.AdminMasterId == AdminMasterId
                                   select new {
                                       A.BookingPerson,
@@ -155,7 +156,7 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                                       C.CaptainName,
                                       C.ContactNo,
                                       C.Email,
-                                      C.BookingTeamsId,
+                                      D.CricketMatchesId,
                                   }).ToListAsync();
 
                 if (Data != null)
