@@ -3,6 +3,7 @@ using CRICKET_BOOKING_12425.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace CRICKET_BOOKING_12425.Controllers.API
 {
@@ -28,6 +29,29 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                 _dbContext.CricketMatches.Add(cricket_Matches);
                 await _dbContext.SaveChangesAsync();
                 return Ok(new { Status = "Ok", Result = "Areng Match Successsully" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("ListMatch/{CricketMatchesId?}")]
+
+        public async Task<IActionResult> ListMatch(int? CricketMatchesId)
+        {
+            try
+            {
+                var Data = await _dbContext.CricketMatches.Where(o=>o.CricketMatchesId == CricketMatchesId).ToListAsync();
+                if (Data != null)
+                {
+                    return Ok(new { Status = "Ok", Result = Data });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "Not founde" });
+                }
             }
             catch (Exception ex)
             {
@@ -94,6 +118,7 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                                      C.MatchDate,
                                      C.Venue,
                                      C.Note,
+                                     C.CricketMatchesId,
                                  }).ToListAsync();
                 if(Data != null)
                 {
@@ -110,5 +135,105 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                 return Ok(new { Status = "Fail", Result = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("MatchSchedule/{TournamentId?}")]
+
+        public async Task<IActionResult> MatchSchedule(int? TournamentId)
+        {
+            try
+            {
+                var Data = await (from A in _dbContext.BookingsTeams
+                                  join B in _dbContext.CricketMatches on A.BookingTeamsId equals B.BookingTeamsId
+                                  where B.TournamentId == TournamentId
+                                  select new 
+                                  {
+                                   A.Logo,
+                                   A.CricHeroesUrl,
+                                   A.CaptainName,
+                                   A.BookingDate,
+                                   B.TeamA,
+                                   B.TeamB,
+                                   B.MatchDate,
+                                   B.Venue,
+                                   B.Note,
+                                  }).ToListAsync();
+            if (Data != null)
+            {
+                return Ok(new { Status = "Ok", Result = Data });
+            }
+            else
+            {
+                return Ok(new { Status = "Fail", Result = "Not founde" });
+            }
+        }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        [Route("Delete/{CricketMatchesId?}")]
+
+        public async Task<IActionResult> DeleteMatch(int? CricketMatchesId)
+        {
+            try
+            {
+                var Data = await _dbContext.CricketMatches.FirstOrDefaultAsync(o => o.CricketMatchesId == CricketMatchesId);
+
+                if (Data != null)
+                {
+                    _dbContext.CricketMatches.Remove(Data);
+                    await _dbContext.SaveChangesAsync();
+                    return Ok(new { Status = "Ok", Result = "Delete Successfully" });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "Not Found" });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        [Route("UpdateMatch")]
+        public async Task<IActionResult> UpdateMatch(Cricket_Matches cricket_Matches)
+        {
+            try
+            {
+                var existingMatch = await _dbContext.CricketMatches
+                    .FirstOrDefaultAsync(m => m.CricketMatchesId == cricket_Matches.CricketMatchesId);
+
+                if (existingMatch == null)
+                {
+                    return Ok(new { Status = "Fail", Result = "Match not found" });
+                }
+
+                // Only update specific fields
+                existingMatch.TeamA = cricket_Matches.TeamA;
+                existingMatch.TeamB = cricket_Matches.TeamB;
+                existingMatch.MatchDate = cricket_Matches.MatchDate;
+                existingMatch.Venue = cricket_Matches.Venue;
+                existingMatch.Match_type = cricket_Matches.Match_type;
+                existingMatch.Match_status = cricket_Matches.Match_status;
+                existingMatch.ClubName = cricket_Matches.ClubName;
+                existingMatch.Note = cricket_Matches.Note;
+
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(new { Status = "Ok", Result = "Update Successfully" });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+
     }
 }

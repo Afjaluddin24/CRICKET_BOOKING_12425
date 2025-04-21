@@ -10,7 +10,7 @@ namespace CRICKET_BOOKING_12425.Models
         public Tournament? Tournament { get; set; }
         public int? BookingTeamsId { get; set; }
         public BookingTeams? BookingTeams { get; set; }
-        public string? TeamA {  get; set; }
+        public string? TeamA {  get; set; } 
         public string? TeamB { get; set; }
         public DateTime MatchDate { get; set; } = DateTime.Now;
         public string Venue {  get; set; } = string.Empty;
