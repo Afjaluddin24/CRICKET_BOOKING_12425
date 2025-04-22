@@ -143,20 +143,16 @@ namespace CRICKET_BOOKING_12425.Controllers.API
         {
             try
             {
-                var Data = await (from A in _dbContext.BookingsTeams
-                                  join B in _dbContext.CricketMatches on A.BookingTeamsId equals B.BookingTeamsId
-                                  where B.TournamentId == TournamentId
+                var Data = await (from A in _dbContext.Tournaments
+                                  join C in _dbContext.CricketMatches on A.TournamentId equals C.TournamentId
+                                  where C.TournamentId == TournamentId 
                                   select new 
                                   {
-                                   A.Logo,
-                                   A.CricHeroesUrl,
-                                   A.CaptainName,
-                                   A.BookingDate,
-                                   B.TeamA,
-                                   B.TeamB,
-                                   B.MatchDate,
-                                   B.Venue,
-                                   B.Note,
+                                   C.TeamA,
+                                   C.TeamB,
+                                   C.MatchDate,
+                                   C.Venue,
+                                   C.Note,
                                   }).ToListAsync();
             if (Data != null)
             {
