@@ -173,6 +173,43 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                 return Ok(new { Status = "Fail", Result = ex.Message });
             }
         }
+        [HttpGet]
+        [Route("BookingList/{AdminMasterId?}")]
+        public async Task<IActionResult> BookingList(int? AdminMasterId)
+        {
+            try
+            {
+                var data = await (from A in _dbContext.BookingsLimets
+                                  join B in _dbContext.Tournaments on A.BookingLimetId equals B.BookingLimetId
+                                  join C in _dbContext.BookingsTeams on B.TournamentId equals C.TournamentId
+                                  where B.AdminMasterId == AdminMasterId
+                                  select new
+                                  {
+                                     A.BookingLimetId,
+                                     A.BookingPerson,
+                                     B.TournamentName,
+                                     B.TournamentType,
+                                     B.StarDate,
+                                     B.AdminMasterId,
+                                     B.TournamentId,
+                                     C.BookingTeamsId,
+                                  }).ToListAsync();
+
+                if (data.Any())
+                {
+                    return Ok(new { Status = "Ok", Result = data });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "No records found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Error", Result = ex.Message });
+            }
+
+        }
 
         [HttpGet]
         [Route("Tournament/{AdminMasterId?}")]

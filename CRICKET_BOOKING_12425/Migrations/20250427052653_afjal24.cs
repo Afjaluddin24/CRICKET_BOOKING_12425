@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CRICKET_BOOKING_12425.Migrations
 {
     /// <inheritdoc />
-    public partial class Afjal24 : Migration
+    public partial class afjal24 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -129,6 +129,44 @@ namespace CRICKET_BOOKING_12425.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CricketMatches",
+                columns: table => new
+                {
+                    CricketMatchesId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TournamentId = table.Column<int>(type: "int", nullable: true),
+                    BookingTeamsId = table.Column<int>(type: "int", nullable: true),
+                    TeamA = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TeamB = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MatchDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Venue = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Match_type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Match_status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ClubName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AdminMasterId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CricketMatches", x => x.CricketMatchesId);
+                    table.ForeignKey(
+                        name: "FK_CricketMatches_AdminMasters_AdminMasterId",
+                        column: x => x.AdminMasterId,
+                        principalTable: "AdminMasters",
+                        principalColumn: "AdminMasterId");
+                    table.ForeignKey(
+                        name: "FK_CricketMatches_BookingsTeams_BookingTeamsId",
+                        column: x => x.BookingTeamsId,
+                        principalTable: "BookingsTeams",
+                        principalColumn: "BookingTeamsId");
+                    table.ForeignKey(
+                        name: "FK_CricketMatches_Tournaments_TournamentId",
+                        column: x => x.TournamentId,
+                        principalTable: "Tournaments",
+                        principalColumn: "TournamentId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PoiteTables",
                 columns: table => new
                 {
@@ -184,6 +222,21 @@ namespace CRICKET_BOOKING_12425.Migrations
                 column: "TournamentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CricketMatches_AdminMasterId",
+                table: "CricketMatches",
+                column: "AdminMasterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CricketMatches_BookingTeamsId",
+                table: "CricketMatches",
+                column: "BookingTeamsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CricketMatches_TournamentId",
+                table: "CricketMatches",
+                column: "TournamentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PoiteTables_AdminMasterId",
                 table: "PoiteTables",
                 column: "AdminMasterId");
@@ -212,6 +265,9 @@ namespace CRICKET_BOOKING_12425.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "CricketMatches");
+
             migrationBuilder.DropTable(
                 name: "PoiteTables");
 

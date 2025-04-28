@@ -24,69 +24,46 @@ namespace CRICKET_BOOKING_12425.Controllers.API
         {
             try
             {
-                // Get the booking limit entry by BookingLimetId
-                var bookingLimit = await _dbContext.BookingsLimets
-                    .Where(x => x.BookingLimetId == bookingTeams.BookingLimetId)
-                    .FirstOrDefaultAsync();
+                // Convert base64 string to byte array for logo
+                byte[] imageBytes = Convert.FromBase64String(bookingTeams.Logo);
 
-                // Count existing bookings for this BookingLimetId
-                var existingBookings = await _dbContext.BookingsTeams
-                    .Where(o => o.BookingLimetId == bookingTeams.BookingLimetId)
-                    .ToListAsync();
+                // Define the directory to store the logo
+                var logoDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Logo");
 
-                // If the number of existing bookings is >= BookingPerson, booking is full
-                if (bookingLimit != null && existingBookings.Count >= bookingLimit.BookingPerson)
+                // Create directory if it doesn't exist
+                if (!Directory.Exists(logoDirectory))
                 {
-                    return Ok(new { Status = "Fail", Result = "Booking Full" });
+                    Directory.CreateDirectory(logoDirectory);
                 }
 
-                // Check for duplicate values
-                List<string> errors = new List<string>();
+                // Generate a unique file name for the logo
+                string fileName = "Img" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
+                var filePath = Path.Combine(logoDirectory, fileName);
 
+                // Save the image to disk
+                System.IO.File.WriteAllBytes(filePath, imageBytes);
 
-                if (string.IsNullOrEmpty(bookingTeams.Logo))
-                {
-                    return Ok(new { Status = "Fail", Result = "Logo is required." });
-                }
+                // Update the logo file name in the bookingTeams object
+                bookingTeams.Logo = fileName;
 
-                try
-                {
-                    byte[] imageBytes = Convert.FromBase64String(bookingTeams.Logo);
-
-                    // Ensure the directory exists
-                    var tournamentImg = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Logo");
-                    if (!Directory.Exists(tournamentImg))
-                    {
-                        Directory.CreateDirectory(tournamentImg);
-                    }
-
-                    // Generate file name with a 24-hour format
-                    string fileName = "Img" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
-
-                    // Create the full file path
-                    var filePath = Path.Combine(tournamentImg, fileName);
-
-                    // Save the image to the server
-                    System.IO.File.WriteAllBytes(filePath, imageBytes);
-
-                    // Update the tournament logo field with the saved file name
-                    bookingTeams.Logo = fileName;
-                }
-                catch (FormatException)
-                {
-                    return Ok(new { Status = "Fail", Result = "Invalid logo format." });
-                }
-
-                // Save the booking data
+                // Add the booking team to the database
                 _dbContext.BookingsTeams.Add(bookingTeams);
                 await _dbContext.SaveChangesAsync();
+
                 return Ok(new { Status = "Ok", Result = "Booking Successfully" });
+            }
+            catch (DbUpdateException dbEx)
+            {
+                // Handle database-specific errors
+                return Ok(new { Status = "Fail", Result = "Database update failed", InnerException = dbEx.InnerException?.Message });
             }
             catch (Exception ex)
             {
-                return Ok(new { Status = "Fail", Result = ex.Message });
+                // Log the general exception
+                return Ok(new { Status = "Fail", Result = ex.Message, InnerException = ex.InnerException?.Message });
             }
         }
+
 
         [HttpGet]
         [Route("BookingList/{AdminMasterId?}")]

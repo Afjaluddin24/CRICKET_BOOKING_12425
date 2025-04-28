@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CRICKET_BOOKING_12425.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250419093252_virat")]
-    partial class virat
+    [Migration("20250427052653_afjal24")]
+    partial class afjal24
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -209,11 +209,11 @@ namespace CRICKET_BOOKING_12425.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TeamA")
-                        .HasColumnType("int");
+                    b.Property<string>("TeamA")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TeamB")
-                        .HasColumnType("int");
+                    b.Property<string>("TeamB")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TournamentId")
                         .HasColumnType("int");
