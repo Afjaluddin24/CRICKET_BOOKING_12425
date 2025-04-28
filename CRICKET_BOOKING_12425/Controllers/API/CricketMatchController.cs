@@ -61,7 +61,6 @@ namespace CRICKET_BOOKING_12425.Controllers.API
 
         [HttpGet]
         [Route("DisplayMatch")]
-
         public async Task<IActionResult> DisplayMatch()
         {
             try
@@ -80,6 +79,8 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                                      C.TeamB,
                                      C.Venue,
                                      C.MatchDate,
+                                     C.Note,
+                                     B.TournamentId,
                                   }).ToListAsync();
                 if (Data != null)
                 {
@@ -96,6 +97,45 @@ namespace CRICKET_BOOKING_12425.Controllers.API
             }
         }
 
+        [Route("MoreMatch/{TournamentId?}")]
+        public async Task<IActionResult> MoreMatch(int? TournamentId)
+        {
+            try
+            {
+                var Data = await (from A in _dbContext.AdminMasters
+                                  join B in _dbContext.Tournaments on A.AdminMasterId equals B.AdminMasterId
+                                  join C in _dbContext.CricketMatches on B.TournamentId equals C.TournamentId
+                                  where C.TournamentId == TournamentId
+                                  select new
+                                  {
+                                      A.Logo,
+                                      A.Address,
+                                      A.PhoneNo,
+                                      A.CubName,
+                                      A.FullName,
+                                      B.TournamentName,
+                                      B.Amount,
+                                      C.TeamA,
+                                      C.TeamB,
+                                      C.Venue,
+                                      C.MatchDate,
+                                      C.Note,
+                                      B.TournamentId,
+                                  }).ToListAsync();
+                if (Data != null)
+                {
+                    return Ok(new { Status = "Ok", Result = Data });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "Not found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
         [HttpGet]
         [Route("TounamentMatchDisplay/{TournamentId?}")]
 
@@ -132,6 +172,8 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                 return Ok(new { Status = "Fail", Result = ex.Message });
             }
         }
+
+      
 
         [HttpGet]
         [Route("PalyMatchDisplay/{AdminMasterId?}")]
