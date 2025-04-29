@@ -15,5 +15,6 @@ namespace CRICKET_BOOKING_12425.ApplicationContext
         public DbSet<BookingTeams> BookingsTeams { get; set; }
         public DbSet<PoiteTable> PoiteTables { get; set; }
         public DbSet<Cricket_Matches> CricketMatches { get; set; }
+        public DbSet<New> News { get; set; }
     }
 }
