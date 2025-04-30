@@ -81,7 +81,7 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                                      B.Description,
                                      B.Sore,
                                      B.TournamentId,
-                                  }).ToListAsync();
+                                  }).Distinct().ToListAsync();
 
                 if (Data != null)
                 {
@@ -98,6 +98,27 @@ namespace CRICKET_BOOKING_12425.Controllers.API
             }
         }
 
+        [HttpGet]
+        [Route("DetalsNews/{NewsId?}")]
+        public async Task<IActionResult> DetalsNews(int? NewsId)
+        {
+            try
+            {
+                var data = await _dbContext.News.Where(o=>o.NewsId == NewsId).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    return NotFound(new { Status = "Not Found", Message = $"No record with Id = {NewsId}" });
+                }
+                return Ok(new { Status = "Ok", Result = data });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+
+       
         [HttpGet]
         [Route("NewList")]
 
