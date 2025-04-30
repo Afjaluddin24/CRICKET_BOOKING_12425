@@ -144,6 +144,7 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                                   select new {
                                       A.BookingPerson,
                                       B.TournamentName,
+                                      B.TournamentId,
                                       B.Logo,
                                       B.Amount,
                                       B.Status,
@@ -151,7 +152,6 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                                       B.StarDate,
                                       B.TournamentType,
                                       A.AdminMasterId,
-                                      C.TournamentId,
                                       C.TeamsName,
                                       C.CaptainName,
                                       C.ContactNo,

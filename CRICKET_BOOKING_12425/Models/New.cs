@@ -6,15 +6,14 @@ namespace CRICKET_BOOKING_12425.Models
     {
         [Key]
         public int NewsId { get; set; }
-        public string? Title { get; set; }
-        public string? Imgs { get; set; }
-        public string? Name { get; set; }
-        public DateTime Publisheddate { get; set; } = DateTime.Now;
+        public string Title { get; set; } = string.Empty;
+        public string Imgs { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public DateTime Date { get; set; } = DateTime.Now;
-        public  string? Category { get; set; }
-        public string? Description { get; set; }
-        public  string? Type { get; set; }
-        public string? Sore { get; set; }
+        public  string Category { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public  string Type { get; set; } = string.Empty;
+        public int? Sore { get; set; }
         public int? TournamentId {  get; set; }
         public Tournament? Tournament { get; set; }
         public int? AdminMasterId { get; set; }

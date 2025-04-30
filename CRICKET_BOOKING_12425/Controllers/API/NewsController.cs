@@ -16,45 +16,48 @@ namespace CRICKET_BOOKING_12425.Controllers.API
         {
             _dbContext = dbContext;
         }
-
         [HttpPost]
         [Route("AddNews")]
-        public async Task<IActionResult> AddNews(New News)
+        public async Task<IActionResult> AddNews(New news)
         {
             try
             {
-                // Convert base64 string to byte array for logo
-                byte[] imageBytes = Convert.FromBase64String(News.Imgs);
+                // Convert base64 string to byte array
+                byte[] imageBytes = Convert.FromBase64String(news.Imgs);
 
-                // Define the directory to store the logo
-                var logoDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "IMG");
+                // Define the directory to save the image
+                string logoDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "IMG");
 
-                // Create directory if it doesn't exist
+                // Ensure the directory exists
                 if (!Directory.Exists(logoDirectory))
                 {
                     Directory.CreateDirectory(logoDirectory);
                 }
 
-                // Generate a unique file name for the logo
-                string fileName = "Img" + DateTime.Now.ToString("yyyyMMddHHmmss") + ".png";
-                var filePath = Path.Combine(logoDirectory, fileName);
+                // Generate a unique filename
+                string fileName = $"Img{DateTime.Now:yyyyMMddHHmmss}.png";
+                string filePath = Path.Combine(logoDirectory, fileName);
 
-                // Save the image to disk
-                System.IO.File.WriteAllBytes(filePath, imageBytes);
+                // Write the file to disk
+                await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
 
-                // Update the logo file name in the bookingTeams object
-                News.Imgs = fileName;
+                // Update the news image path to filename only
+                news.Imgs = fileName;
 
-                _dbContext.News.Add(News);
+                // Save to database
+                _dbContext.News.Add(news);
                 await _dbContext.SaveChangesAsync();
                 return Ok(new { Status = "Ok", Result = "Save Successfully" });
+
             }
             catch (Exception ex)
             {
+                // Handle any errors and return the error message
                 return Ok(new { Status = "Fail", Result = ex.Message });
             }
-
         }
+
+
 
         [HttpGet]
         [Route("NewDisplay/{AdminMasterId?}")]
@@ -63,7 +66,22 @@ namespace CRICKET_BOOKING_12425.Controllers.API
         {
             try
             {
-                var Data = await _dbContext.News.FindAsync(AdminMasterId);
+                var Data = await (from A in _dbContext.News
+                                  join B in _dbContext.News on A.AdminMasterId equals B.AdminMasterId
+                                  where B.AdminMasterId == AdminMasterId
+                                  select new
+                                  {
+                                     A.AdminMasterId,
+                                     B.NewsId,
+                                     B.Name,
+                                     B.Imgs,
+                                     B.Title,
+                                     B.Date,
+                                     B.Category,
+                                     B.Description,
+                                     B.Sore,
+                                     B.TournamentId,
+                                  }).ToListAsync();
 
                 if (Data != null)
                 {
@@ -103,5 +121,31 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                 return Ok(new { Status = "Fail", Result = ex.Message });
             }
         }
-    }
+        [HttpGet]
+        [Route("Delete/{NewsId?}")]
+
+        public async Task<IActionResult> Delete(int? NewsId)
+        {
+            try
+            {
+                var Data = _dbContext.News.Find(NewsId);
+
+                if (Data != null)
+                {
+                    _dbContext.News.Remove(Data);
+                    await _dbContext.SaveChangesAsync();
+                    return Ok(new { Status = "Ok", Result = Data });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "Not Found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+    
+}
 }
