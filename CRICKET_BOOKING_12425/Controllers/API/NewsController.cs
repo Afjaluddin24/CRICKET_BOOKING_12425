@@ -118,7 +118,47 @@ namespace CRICKET_BOOKING_12425.Controllers.API
             }
         }
 
-       
+
+        [HttpGet]
+        [Route("NewDisplayDetals")]
+
+        public async Task<IActionResult> NewDisplayDetals()
+        {
+            try
+            {
+                var Data = await (from A in _dbContext.AdminMasters
+                                  join B in _dbContext.Tournaments on A.AdminMasterId equals B.AdminMasterId
+                                  join C in _dbContext.News on B.TournamentId equals C.TournamentId
+                                  select new
+                                  {
+                                      A.CubName,
+                                      A.FullName,
+                                      A.PhoneNo,
+                                      B.TournamentName,
+                                      B.TournamentType,
+                                      C.Name,
+                                      C.Title,
+                                      C.Description,
+                                      C.Imgs,
+                                      C.Date,
+                                      C.Sore,
+                                  }).ToListAsync();
+                if (Data != null)
+                {
+                    return Ok(new { Status = "Ok", Result = Data });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "Not found" });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+
         [HttpGet]
         [Route("NewList")]
 
