@@ -16,5 +16,11 @@ namespace CRICKET_BOOKING_12425.ApplicationContext
         public DbSet<PoiteTable> PoiteTables { get; set; }
         public DbSet<Cricket_Matches> CricketMatches { get; set; }
         public DbSet<New> News { get; set; }
+        public DbSet<MaineAdmin> MaineAdmins { get; set; }
+        public DbSet<HeaderImg> HeaderImgs { get; set; }
+        public DbSet<AdminNews> AdminNews { get; set; } 
+        public DbSet<AdminVideo> AdminVideos { get; set; }
+        public DbSet<Adminteams> AdminTeams { get; set; }
+        public DbSet<Contact> Contact { get; set; }
     }
 }
