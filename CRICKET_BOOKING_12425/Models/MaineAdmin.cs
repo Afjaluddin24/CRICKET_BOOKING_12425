@@ -23,17 +23,17 @@ namespace CRICKET_BOOKING_12425.Models
         public string Adress { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
 
-        [NotMapped]
-        public class Authentication
-        {
-            public string Name { get; set; } = string.Empty;
-            public string Password { get; set; } = string.Empty;
-        }
-
         public ICollection<HeaderImg> HeaderImg { get; set; }
         public ICollection <AdminNews> AdminNews { get; set; }
         public ICollection <AdminVideo> AdminVideos { get; set; }
         public ICollection <Adminteams> Adminteams { get; set; }
         public ICollection <Contact> Contacts { get; set; }
+
+        [NotMapped]
+        public class MainAdmin
+        {
+            public string Name { get; set; } = string.Empty;
+            public string Password { get; set; } = string.Empty;
+        }
     }
 }
