@@ -63,7 +63,7 @@ namespace CRICKET_BOOKING_12425.Controllers.API
         {
             try
             {
-                var Data = await _dbContext.HeaderImgs.Where(o=>o.MaineAdminId == MaineAdminId).FirstOrDefaultAsync();
+                var Data = await _dbContext.HeaderImgs.Where(o=>o.MaineAdminId == MaineAdminId).ToListAsync();
 
                 if(Data != null)
                 {
@@ -79,5 +79,31 @@ namespace CRICKET_BOOKING_12425.Controllers.API
                 return Ok(new { Status = "Fail", Result = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("Detals/{HeaderImgId?}")]
+
+        public async Task<IActionResult> Detals(int? HeaderImgId)
+        {
+            try
+            {
+                var Data = await _dbContext.HeaderImgs.Where(o => o.HeaderImgId == HeaderImgId).FirstOrDefaultAsync();
+
+                if (Data != null)
+                {
+                    return Ok(new { Status = "Ok", Result = Data });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "Not Found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+
+
     }
 }
