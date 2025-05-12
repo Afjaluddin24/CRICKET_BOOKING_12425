@@ -19,7 +19,6 @@ namespace CRICKET_BOOKING_12425.Controllers.API
 
         [HttpPost]
         [Route("AddImages")]
-
         public async Task<IActionResult> AddNews(HeaderImg HeaderImg)
         {
             try
@@ -81,6 +80,30 @@ namespace CRICKET_BOOKING_12425.Controllers.API
         }
 
         [HttpGet]
+        [Route("Display")]
+
+        public async Task<IActionResult> Display()
+        {
+            try
+            {
+                var Data =  _dbContext.HeaderImgs.ToList();
+
+                if (Data != null)
+                {
+                    return Ok(new { Status = "Ok", Result = Data });
+                }
+                else
+                {
+                    return Ok(new { Status = "Fail", Result = "Not Found" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
+
+        [HttpGet]
         [Route("Detals/{HeaderImgId?}")]
 
         public async Task<IActionResult> Detals(int? HeaderImgId)
@@ -104,6 +127,39 @@ namespace CRICKET_BOOKING_12425.Controllers.API
             }
         }
 
+
+        [HttpPost]
+        [Route("Update")]
+        public async Task<IActionResult> Update(HeaderImg HeaderImg)
+        {
+            try
+            {
+
+                byte[] imageBytes = Convert.FromBase64String(HeaderImg.Imgs);
+
+                string imageDirectory = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "IMG");
+                if (!Directory.Exists(imageDirectory))
+                {
+                    Directory.CreateDirectory(imageDirectory);
+                }
+
+                string fileName = $"Img_{DateTime.Now:yyyyMMddHHmmssfff}.png";
+                string filePath = Path.Combine(imageDirectory, fileName);
+                await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
+
+                HeaderImg.Imgs = fileName;
+                _dbContext.HeaderImgs.Update(HeaderImg);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(new { Status = "Ok", Result = "Update Successfully" });
+
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new { Status = "Fail", Result = ex.Message });
+            }
+        }
 
     }
 }
