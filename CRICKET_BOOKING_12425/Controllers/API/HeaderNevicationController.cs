@@ -86,7 +86,7 @@ namespace CRICKET_BOOKING_12425.Controllers.API
         {
             try
             {
-                var Data =  _dbContext.HeaderImgs.ToList();
+                var Data =  _dbContext.HeaderImgs.ToListAsync();
 
                 if (Data != null)
                 {
